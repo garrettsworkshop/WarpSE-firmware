@@ -1,1 +1,0 @@
-run –ifn WarpSE.prj –ifmt mixed -top WarpSE –ofn WarpSE.ngc –ofmt NGC –p XC95144XL-10-TQ100 –opt_mode Speed –opt_level 1

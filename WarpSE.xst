@@ -1,0 +1,9 @@
+run 
+-p XC95144XL-10-TQ100
+-ifn ../../../WarpSE.prj 
+-ifmt mixed 
+-top WarpSE 
+-ofn WarpSE.ngc 
+-ofmt NGC 
+-opt_mode Speed 
+-opt_level 1
