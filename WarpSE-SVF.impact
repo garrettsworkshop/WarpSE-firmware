@@ -1,6 +1,5 @@
 setMode -bs
 setCable -p svf -file WarpSE.svf
 addDevice -p 1 -file WarpSE.jed
-program -e -p 1
-verify -p 1
+program -p 1 -e -verify
 quit
