@@ -5,4 +5,5 @@ verilog work ../../../FSB.v
 verilog work ../../../IOBM.v
 verilog work ../../../IOBS.v
 verilog work ../../../RAM.v
+verilog work ../CFG.v
 verilog work ../SET.v
