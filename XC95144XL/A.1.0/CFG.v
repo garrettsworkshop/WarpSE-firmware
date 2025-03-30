@@ -1,19 +1,25 @@
 module CFG(
-	input [23:20] A,
+	/* FSB address input */
+	input [23:18] A,
+	/* Gated address output */
 	inout GA23,
 	inout GA22,
 	inout GA21,
 	inout GA20,
+	/* Write gate during slowdown config */
 	output SlowdownIOWriteGate,
+	/* RAM address inputs */
 	input [11:10] RA,
-	input [19:18] BA,
 	input RowA10,
+	/* RAM address outputs */
 	output RA11_BA19,
 	output RA10,
 	inout nBG_BA18,
-	input DBG0_ROMWS,
-	input DBG1_RAMWS,
-	input DBG4_IOWS,
+	/* Wait state jumper inputs */
+	input DBG0_nROMWS,
+	input DBG1_nRAMWS,
+	input DBG4_nIOWS,
+	/* Wait state config outputs */
 	output ROMWS,
 	output RAMWS,
 	output IOWS);
@@ -29,12 +35,12 @@ module CFG(
 
 	assign SlowdownIOWriteGate = 1;
 
-	output RA11_BA19 = BA[19];
+	output RA11_BA19 = 1'b1;
 	output RA10 = RowA10;
-	assign nBG_BA18 = BA[18];
+	assign nBG_BA18 = 1'b1;
 
-	assign ROMWS = DBG0_ROMWS;
-	assign RAMWS = DBG1_RAMWS;
-	assign IOWS = DBG4_IOWS;
+	assign ROMWS = !DBG0_nROMWS;
+	assign RAMWS = !DBG1_nRAMWS;
+	assign IOWS  = !DBG4_nIOWS;
 
 endmodule

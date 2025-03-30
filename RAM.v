@@ -67,7 +67,7 @@ module RAM(
 
 	/* RAM address mux (and ROM address on RA8) */
 	// RA11 doesn't do anything so both should be identical.
-	assign RA[11] =   !RASEL ? A[19] : A[20]; // ROM address 19
+	assign RA[11] = !RASEL ? A[19] : A[20]; // ROM address 19
 	assign RA[03] = !RASEL ? A[19] : A[20];
 	// RA10 has only row so different rows but same column.
 	assign RA[10] = !RASEL ? A[17] : A[07];

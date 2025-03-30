@@ -76,8 +76,8 @@ module CNT(
 	always @(posedge CLK) begin
 		if (!nRESin) QS <= 3;
 		else if (SndCSWRr) QS <= 15;
-		else if (BACT && VIACS) QS[1] <= 1;
-		else if (BACT && IWMCS) QS[1] <= 1;
+		else if (BACT && VIACS) QS[1:0] <= 2'b11;
+		else if (BACT && IWMCS) QS[1:0] <= 2'b11;
 		else if (QS!=0 && TimerTick) QS <= QS-1;
 	end
 	

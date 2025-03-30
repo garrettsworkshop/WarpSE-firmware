@@ -21,7 +21,7 @@ module WarpSE(
 	output nUDS_IOB,
 	output nLDS_IOB,
 	output nBR_IOB,
-	input nBG_IOB,
+	inout nBG_IOB_BA18,
 	input nBERR_IOB,
 	inout nRES,
 	input nIPL2,
@@ -31,7 +31,9 @@ module WarpSE(
 	output nROMWE,
 	output nRAS,
 	output nCAS,
-	output [11:0] RA,
+	output RA11_BA19,
+	output RA10,
+	output [9:0] RAout,
 	output nOE,
 	output nADoutLE0,
 	output nADoutLE1,
@@ -40,43 +42,43 @@ module WarpSE(
 	output nDinOE,
 	output nDinLE,
 	output MCKE,
-	input DBG0_ROMWS,
-	input DBG1_RAMWS,
+	input DBG0_nROMWS,
+	input DBG1_nRAMWS,
 	inout DBG2_GA20,
 	inout DBG3_GA21,
-	input DBG4_IOWS,
+	input DBG4_nIOWS,
 	input DBG5_GTS,
 	input DBG5_GSR);
 
 	wire SlowdownIOWriteGate;
 	wire ROMWS, RAMWS, IOWS;
+	wire [11:0] RA;
+	wire RowA10;
 	CFG cfg(
 		/* FSB address input */
-		.A(A_FSB[23:20]),
+		A(A_FSB[23:18]),
 		/* Gated address output */
-		.GA23(GA23),
-		.GA22(GA22),
-		.GA21(DBG3_GA21),
-		.GA20(DBG2_GA20),
+		GA23(GA23),
+		GA22(GA22),
+		GA21(DBG3_GA21),
+		GA20(DBG2_GA20),
+		/* Write gate during slowdown config */
+		SlowdownIOWriteGate(SlowdownIOWriteGate),
+		/* RAM address inputs */
+		RA(RA),
+		RowA10(RowA10),
+		/* RAM address outputs */
+		RA11_BA19(RA11_BA19),
+		RA10(RA10),
+		nBG_BA18(nBG_IOB_BA18),
 		/* Wait state jumper inputs */
-		.DBG0_ROMWS(DBG0_ROMWS),
-		.DBG1_RAMWS(DBG1_RAMWS),
-		.DBG4_IOWS(DBG4_IOWS),
-		/* Wait state jumper outputs */
-		.ROMWS(ROMWS),
-		.RAMWS(RAMWS),
-		.IOWS(IOWS),
-		.SlowdownIOWriteGate(SlowdownIOWriteGate));
-
-	/* GA gated (translated) address output */
-	assign GA[23:22] = A_FSB[23:22];
-	/*assign GA[23:22] = (
-		// $800000-$8FFFFF to $000000-$0FFFFF (1 MB)
-		(A_FSB[23:20]==4'h8) ||
-		// $700000-$7EFFFF to $300000-$3EFFFF (960 kB)
-		(A_FSB[23:20]==4'h7 && A_FSB[19:16]!=4'hF) ||
-		// $600000-$6FFFFF to $200000-$2FFFFF (1 MB)
-		(A_FSB[23:20]==4'h6)) ? 2'b00 : A_FSB[23:22];*/
+		DBG0_nROMWS(DBG0_nROMWS),
+		DBG1_nRAMWS(DBG1_nRAMWS),
+		DBG4_nIOWS(DBG4_nIOWS),
+		/* Wait state config outputs */
+		ROMWS(ROMWS),
+		RAMWS(RAMWS),
+		IOWS(IOWS));
 
 	/* Reset input and open-drain output */
 	wire nRESin = nRES;
@@ -131,6 +133,7 @@ module WarpSE(
 		.SetCSWR(SetCSWR));
 
 	wire RAMReady, ROMReady,
+	assign RAout[9:0] = RA[9:0];
 	RAM ram(
 		/* MC68HC000 interface */
 		.CLK(FCLK),
@@ -152,7 +155,7 @@ module WarpSE(
 		.RAMWS(RAMWS),
 		.ROMWS(ROMWS),
 		/* RAM/ROM ready outputs */
-		.RAMReady(DBG1_RAMWS),
+		.RAMReady(DBG1_nRAMWS),
 		.ROMReady(DBG1_ROMWS),
 		/* Refresh Counter Interface */
 		.RefReqIn(RefReq),
